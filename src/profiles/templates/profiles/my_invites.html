@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  My Invites
+{% endblock title %}
+  
+{% block content %}
+  {% for obj in qs %}
+    <div class="row m-2">
+      <div class="col-2">
+        <img class="rounded-circle" width="100px" src="{{ obj.avatar.url }}">
+      </div>
+      <div class="col-2">
+        <h3>{{obj.user}}</h3>
+        <p>{{obj.bio}}</p>
+      </div>
+      <a href="{{ obj.get_absolute_url }}"><button class="btn btn-primary">See profile</button></a>
+      <div class="text-center ml-auto">
+        <form action="{% url 'profiles:accept-invite' %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="profile_pk" value="{{ obj.pk }}">
+          <button type="submit" class="btn btn-success align-middle"><i class="fas fa-check"></i> Accept invite</button>
+        </form>
+      </div>
+      <div class="col-2">
+        <form action="{% url 'profiles:reject-invite' %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="profile_pk" value="{{ obj.pk }}">
+          <button type="submit" class="btn btn-danger align-middle"><i class="fas fa-times"></i> Reject invite</button>
+        </form>
+
+      </div>
+    {% empty %}
+      <p class="text-center mt-2"><b>No invitations here...</b></p>  
+    </div>
+    {% endfor %}
+  </div>
+
+{% endblock content %}

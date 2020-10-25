@@ -1,0 +1,60 @@
+{% url 'login' as path_to_login %}
+{% url 'logout' as path_to_logout %}
+{% url 'register' as path_to_register %}
+
+{% url 'posts:main-post-view' as path_to_posts %}
+{% url 'posts:myposts' as path_to_myposts %}
+{% url 'profiles:myprofile' as path_to_my_profile %}
+{% url 'profiles:my-invites' as path_to_my_invites %}
+{% url 'profiles:invite-profiles' as path_to_invites %}
+{% url 'profiles:all-profiles' as path_to_all_profiles %}
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <a class="navbar-brand" href="{% url 'posts:main-post-view' %}">Social</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    <ul class="navbar-nav mr-auto">
+      {% if request.path == path_to_home %}active{% endif %}
+      <li class="nav-item {% if request.path == path_to_posts %}active{% endif %}">
+        <a class="nav-link" href="{{ path_to_posts }}">Home</a>
+      </li>
+      <li class="nav-item {% if request.path == path_to_myposts %}active{% endif %}">
+        <a href="{{ path_to_myposts }}" class="nav-link">My Posts</a>
+      </li>
+      <li class="nav-item dropdown ">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Friends
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="{{ path_to_all_profiles }}">All Profiles</a>
+          <a class="dropdown-item" href="{{ path_to_invites }}">Send Invites</a>
+          <a class="dropdown-item" href="{{ path_to_my_invites }}">Received Invites &nbsp; <span class="badge badge-primary">{{invites_num}}</span></a>
+        </div>
+      </li>
+    </ul>
+
+    
+    
+    <ul class="navbar-nav">
+      {% if request.user.is_authenticated %}      
+        <li class="nav-item {% if request.path == path_to_my_profile %}active{% endif %}">
+          <a class="nav-link" href="{{ path_to_my_profile }}">Welcome, {{ request.user }}</a>
+        </li>
+        <li class="nav-item {% if request.path == path_to_logout %}active{% endif %}">
+          <a class="nav-link" href="{{ path_to_logout }}">logout</a>
+        </li>
+      {% else %}
+        <li class="nav-item {% if request.path == path_to_login %}active{% endif %}">
+        <a class="nav-link" href="{{ path_to_login }}">Login</a>
+        </li>
+        <li class="nav-item {% if request.path == path_to_register %}active{% endif %}">
+          <a class="nav-link" href="{{ path_to_register }}">Register</a>
+        </li>
+      {% endif %}
+
+    </ul>
+  </div>
+</nav>

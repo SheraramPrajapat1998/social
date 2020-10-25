@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Invites Friends
+{% endblock title %}
+  
+{% block content %}
+  {% if is_empty %}
+    <h1>No invitations here...</h1>
+  {% endif %}
+
+  {% for obj in qs %}
+    <div class="row mt-2">
+      <div class="">
+        <img class="rounded-circle" width="100px" src="{{ obj.avatar.url }}">
+      </div>
+      <div class="col">
+        <h3>{{obj.user}}</h3>
+        <p>{{obj.bio}}</p>
+      </div>
+      <div class="col">        
+        <a href="{{ obj.get_absolute_url }}"><button class="btn btn-primary">See profile</button></a>
+      </div>
+
+      <div class="text-center ml-auto">
+        {% if obj.user not in rel_receiver and obj.user not in rel_sender %}
+          <form action="{% url 'profiles:accept-invite' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="profile_pk" value="{{ obj.pk }}">
+            <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Accept invite</button>
+          </form>
+        {% endif %}
+      </div>
+
+      {% if obj.user in rel_receiver and request.user not in obj.friends.all %}
+        <button class="btn btn-dark"><i class="fas fa-clock"></i> Waiting for approval</button>
+      {% endif %}
+          
+      <div class="col">
+        {% if obj.user in rel_receiver and request.user not in obj.friends.all %}
+          <form action="{% url 'profiles:reject-invite' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="profile_pk" value="{{ obj.pk }}">
+            <button type="submit" class="btn btn-danger"><i class="fas fa-times"></i> Reject invite</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+{% endblock content %}

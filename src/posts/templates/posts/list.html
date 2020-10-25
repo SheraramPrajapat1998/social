@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  Home  
+{% endblock title %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-xs-12 col-lg-9 ">
+      {% for obj in qs %}
+      <div class="border rounded mt-2 p-2">
+        <div class="pt-2">
+          <div class="">
+            <img src="{{ obj.author.avatar.url }}" alt="profile_pic" class="rounded-circle float-left" width="40px">
+            <span class="pl-5 mt-2"><b>{{ obj.author.user }} -- {{ obj.created|timesince }} ago </b></span>
+            
+            {% ifequal request.user obj.author.user %}
+              <span class="float-right">
+                <a href="{% url 'posts:post-update' obj.pk %}" class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
+                <a href="{% url 'posts:post-delete' obj.pk %}" class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i></a>
+              </span>
+            {% endifequal %}
+            <hr class="mb-0">
+          </div>
+        </div>
+        <div class="text-center mt-0">          
+          {% if obj.image %}
+          <img src="{{ obj.image.url }}" alt="post_image" class="img-thumbnail">
+          {% endif %}
+        </div>
+        
+        <div class="px-3">          
+          <p class="text-justify">{{ obj.content|linebreaks }}</p>
+        </div>
+        <div class="float-right">
+          <form action="{% url 'posts:like-post-view' %}" method="post" id="{{ obj.id }}" class="like-form">
+            {% csrf_token %}
+            <input type="hidden" name="post_id" value="{{ obj.id }}">
+
+            <button type="submit" class="like-btn{{ obj.id }} btn btn-info">
+              {% if profile not in obj.liked.all %}
+                Like
+              {% else %}
+                Unlike
+              {% endif %}
+            </button>
+            
+            <div>
+              <div class="like-count{{obj.id}}">{{ obj.num_likes }}                
+                <span>like{{ obj.num_likes|pluralize }}</span>
+              </div>
+            </div>
+          </form>
+        </div>
+        
+        <div class="mx-auto">
+          <div>
+            <i class="fas fa-comments fa-2x"></i>
+            <span>{{ obj.num_comments }} comment{{ obj.num_comments|pluralize }} </span>
+            
+            
+            {% if obj.num_comments > 0 %}              
+            
+            <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample{{obj.pk}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+              show / hide comments
+            </a>
+            {% endif %}
+          </div>
+
+          <div class="collapse" id="collapseExample{{obj.pk}}">
+            <div class="card card-body">
+            {% if obj.comments.all %}
+              {% for c in obj.comments.all %}
+                <div>
+                  <img src="{{ c.user.avatar.url }}" alt="profile_pic" class="rounded-circle float-left" width="30px">
+                  <span class=""> {{ c.user|linebreaks }}</span>
+                  
+                  {% if request.user == obj.author.user %}
+                    <span class="">
+                      <a href="" class="btn btn-danger">Delete</a>
+                    </span>
+                  {% endif %}
+
+                  <p>       
+                    {{ c.body }}
+                    </p>
+                  </div>
+              {% endfor %}
+            {% endif %}
+            </div>
+          </div>
+
+          <form action="." method="post">
+            {% csrf_token %}
+            <input type="hidden" name="post_id" value="{{ obj.id }}">
+            {{ c_form|crispy }}
+            <input type="submit" name="submit_c_form" value="Comment" class="btn btn-primary">
+          </form>
+        </div>
+      </div>
+
+      {% endfor %}
+    </div>
+
+
+    <div class="col-sm-12 col-lg-3">
+      <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ p_form|crispy }}
+        <input type="submit" name="submit_p_form" value="Post" class="btn btn-primary">
+      </form>
+    </div>
+    
+  </div>
+{% endblock content %}
+
+
+{% block extrajs %}
+<script>
+  $( document ).ready(function() {
+    $('.like-form').submit(function(e){
+      e.preventDefault()
+      
+      const post_id = $(this).attr('id')
+      
+      const likeText = $(`.like-btn${post_id}`).text()
+      const trim = $.trim(likeText)
+
+      const url = $(this).attr('action')
+      
+      let res;
+      const likes = $(`.like-count${post_id}`).text()
+      const trimCount = parseInt(likes)
+      
+      $.ajax({
+        type: 'POST',
+        url: url,
+        data: {
+          'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+          'post_id':post_id,
+        },
+        success: function(response) {
+          if(trim === 'Unlike') {
+            $(`.like-btn${post_id}`).text('Like')
+            res = trimCount - 1
+          } else {
+            $(`.like-btn${post_id}`).text('Unlike')
+            res = trimCount + 1
+          }
+
+          $(`.like-count${post_id}`).text(res)
+        },
+        error: function(response) {
+          console.log('error', response)
+        }
+      })
+
+    })
+  });
+</script>
+{% endblock extrajs %}  

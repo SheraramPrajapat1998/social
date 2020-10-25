@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  Home  
+{% endblock title %}
+
+{% block content %}
+  <div class="row">
+    {% for obj in qs %}
+      <div class="col-6">
+        <div class="border rounded mt-2 p-2">
+          <div class="pt-2">
+            <div>
+              <span><b>{{ obj.created|timesince }} ago </b></span>
+              
+              {% if obj.draft %}
+                <span class="text-danger"><b><i>&nbsp; Status: Draft / Not published </i> </b> </span>
+              {% endif %}
+                
+              {% ifequal request.user obj.author.user %}
+                <span class="float-right">
+                  <a href="{% url 'posts:post-update' obj.pk %}" class="btn btn-outline-warning"><i class="fas fa-edit"></i></a>
+                  <a href="{% url 'posts:post-delete' obj.pk %}" class="btn btn-outline-danger"><i class="fas fa-trash-alt"></i></a>
+                </span>
+              {% endifequal %}
+              <hr class="mb-0">
+            </div>
+          </div>
+          <div class="text-center mt-0">          
+            {% if obj.image %}
+            <img src="{{ obj.image.url }}" alt="post_image" class="img-thumbnail">
+            {% endif %}
+          </div>
+          
+          <div class="px-3">          
+            <p class="text-justify">{{ obj.content|linebreaks }}</p>
+          </div>
+          <div class="float-right">
+            <div>
+              <div class="like-count{{obj.id}}">{{ obj.num_likes }}                
+                <span>like{{ obj.num_likes|pluralize }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mx-auto">
+            <div>
+              <i class="fas fa-comments fa-2x"></i>
+              <span>{{ obj.num_comments }} comment{{ obj.num_comments|pluralize }} </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+    <div class="col mt-2">
+      <p class="text-center"><b> You haven't added any post yet.</b></p>
+    </div>
+    {% endfor %}
+    
+  </div>
+{% endblock content %}
+

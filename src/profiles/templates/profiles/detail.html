@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Profile Detail
+{% endblock title %}
+  
+{% block content %}
+  <div class="row">
+    <div class="col-12 text-center border-bottom d-flex align-items-start mx-auto mt-2 p-2">
+      <img src="{{ object.avatar.url }}" alt="profile_pic" class="rounded-circle" width="80px">
+      <h2  class="p-2">{{ object.user }}</h2>
+      <div class="p-2">
+        Posts
+        <div>
+          {{ object.get_posts_num }}
+        </div>
+      </div>
+      <div  class="p-2">
+        Likes given
+        <div>{{ object.get_likes_given_num }}</div>
+      </div>
+      <div class="p-2">
+        Likes received
+        <div>{{ object.get_likes_received_num }}</div>
+      </div>
+      <div class="p-2">
+        Friends
+        <div>{{ object.get_friends_num }}</div>
+      </div>
+      
+      {% if object.user not in rel_receiver and object.user not in rel_sender %}
+        <div class="p-2">
+          <form action="{% url 'profiles:send-invite' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="profile_pk" value="{{ object.pk }}">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add to friends</button>
+          </form>
+        </div>
+      {% endif %}
+      
+      {% if object.user in rel_receiver and request.user not in object.friends.all %}
+        <button class="btn btn-dark"><i class="fas fa-clock"></i>Waiting for approval</button>
+      {% endif %}
+      
+      {% if request.user in object.friends.all %}
+        <div>
+          <form action="{% url 'profiles:remove-friend' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="profile_pk" value="{{ object.pk }}">
+            <button type="submit" class="btn btn-danger" ><i class="fas fa-minus"></i> Remove from friends</button>
+          </form>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="col-12">
+      {% if len_posts %}
+        {% for post in posts %}
+          <ul class="border rounded">
+            <li>
+              <div class="m-3 mb-0">
+                {{ forloop.counter }}
+                <span class="float-right"><i class="fas fa-heart"> {{ post.num_likes }}</i> &nbsp; <i class="fas fa-comments"> {{ post.num_comments }}</i> </span>
+              </div>
+              <div>{{ post.content|linebreaks }}</div>
+            </li>
+          </ul>
+        {% endfor %}
+      {% else %}
+        <h3>No posts of this user</h3>  
+      {% endif %}
+    </div>
+  </div>
+{% endblock content %}

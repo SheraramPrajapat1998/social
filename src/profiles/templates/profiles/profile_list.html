@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  All Profiles
+{% endblock title %}
+
+{% block content %}
+  {% if is_empty %}
+    <h1>No profiles to interact with</h1>
+  {% endif %}
+
+  {% for obj in object_list %}
+    <div class="row m-2">
+      <div class="col-2">
+        <img class="rounded-circle" width="100px" src="{{ obj.avatar.url }}">
+      </div>
+      <div class="col-4">
+        <h3>{{obj.user}}</h3>
+        <p>{{obj.bio}}</p>
+      </div>
+      <a href="{{ obj.get_absolute_url }}"><button class="btn btn-primary">See profile</button></a>
+      <div class="col-4">
+        {% if obj.user not in rel_receiver and obj.user not in rel_sender %}
+          <form action="{% url 'profiles:send-invite' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="profile_pk" value={{obj.pk}}>
+            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add to friends</button>
+          </form>
+        {% endif %}
+
+        {% if obj.user in rel_receiver and request.user not in obj.friends.all %}
+          <button class="btn btn-dark"><i class="fas fa-clock"></i> Waiting for approval</button>
+        {% endif %}
+
+        {% if request.user in obj.friends.all %}
+          <form action="{% url 'profiles:remove-friend' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="profile_pk" value={{obj.pk}}>
+            <button type="submit" class="btn btn-danger"><i class="fas fa-minus"></i> Remove from friends</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-2"></div>
+    {% endfor %}
+  </div>
+{% endblock content %}
