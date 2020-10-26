@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Search Results
+{% endblock title %}
+  
+{% block content %}
+  <h2>Results matching to '{{ q }}'</h2>
+
+  <h4 class="border-bottom border-dark">Profiles</h4>
+
+  {% for obj in profiles %}
+    <div class="row mt-2">
+      <div class="col-2">
+        <img class="rounded-circle" width="100px" src="{{ obj.avatar.url }}">
+      </div>
+      <div class="float-right col-8">        
+        <h3>{{obj.user}}</h3>        
+        {% if obj.first_name %}
+          <span>          
+            First Name: {{ obj.first_name }}
+          </span>
+        {% endif %}
+        {% if obj.last_name %}
+          <span>          
+            Last Name: {{ obj.last_name }}
+          </span>
+        {% endif %}
+          
+        <span>Bio: {{obj.bio}}</span>
+      </div>
+      <a href="{{ obj.get_absolute_url }}"><button class="btn btn-primary mx-auto text-center">See profile</button></a>
+    </div>  
+  {% empty %}
+    <p>No Profiles match with given query</p>
+  {% endfor %}
+  
+  <h4 class="border-bottom border-dark">Posts</h4>
+  {% for obj in posts %}
+    <div class="row">
+      <div class="col-12 border">       
+        <div class="p-2 float-right">
+          <h3 class="">          
+            <img class="rounded-circle" width="100px" src="{{ obj.author.avatar.url }}">
+            {{ obj.author.user }}
+          </h3>
+        </div>
+        {{ obj.content|linebreaks }}
+      </div>
+    </div>
+  {% empty %}
+    <p>No posts match with given query</p>  
+  {% endfor %}
+    
+{% endblock content %}

@@ -10,3 +10,7 @@ Django 3, bootstrap4, HTML5, CSS3
   - Post
   - Comment
   - Like
+
+
+Friendship model implemented
+search functionality

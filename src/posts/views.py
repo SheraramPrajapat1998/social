@@ -3,11 +3,33 @@ from django.urls import reverse_lazy
 from .models import Post, Like
 from profiles.models import Profile
 from .forms import PostModelForm, CommentModelForm
-from django.views.generic import UpdateView, DeleteView
+from django.views.generic import ListView, UpdateView, DeleteView
 from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
+
+# search function -> search in profile(fields: first_name, last_name, user)
+# posts(fields: contett, author)
+
+def search(request):
+  q = request.GET.get('q', None)
+  print(q)
+  if q is not None:
+    all_model_dict = {
+      'profiles' : Profile.objects.filter(
+        Q(first_name__icontains=q) | Q(last_name__icontains=q) | Q(user__username__icontains=q)
+      ), 
+      'posts': Post.objects.filter(
+        Q(content__icontains=q) | Q(author__user__username=q)
+      ),
+      'q': q,
+    }
+  else:
+    all_model_dict = {}
+  print(all_model_dict)
+  return render(request, 'search.html', all_model_dict)
 
 @login_required
 def myposts(request):

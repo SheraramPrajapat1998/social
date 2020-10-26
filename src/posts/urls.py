@@ -5,6 +5,7 @@ from .import views
 app_name = 'posts'
 
 urlpatterns = [
+  path('search/', views.search, name='search'),
   path('', views.post_comment_create_and_list_view, name='main-post-view'),
   path('myposts/', views.myposts, name='myposts'),
   path('liked/', views.like_unlike_post, name='like-post-view'),

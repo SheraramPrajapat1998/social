@@ -34,6 +34,11 @@
           <a class="dropdown-item" href="{{ path_to_my_invites }}">Received Invites &nbsp; <span class="badge badge-primary">{{invites_num}}</span></a>
         </div>
       </li>
+      
+      <form class="form-inline ml-2" action="{% url 'posts:search' %}" method="GET">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search here..." name='q' aria-label="Search">
+        <button class="btn btn-dark my-2 my-sm-0" type="submit">Search</button>
+      </form>
     </ul>
 
     
