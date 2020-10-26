@@ -118,12 +118,13 @@
 
 {% block extrajs %}
 <script>
+
   $( document ).ready(function() {
     $('.like-form').submit(function(e){
       e.preventDefault()
       
       const post_id = $(this).attr('id')
-      
+
       const likeText = $(`.like-btn${post_id}`).text()
       const trim = $.trim(likeText)
 
@@ -141,6 +142,7 @@
           'post_id':post_id,
         },
         success: function(response) {
+          console.log('sdsd');
           if(trim === 'Unlike') {
             $(`.like-btn${post_id}`).text('Like')
             res = trimCount - 1
@@ -149,10 +151,10 @@
             res = trimCount + 1
           }
 
-          $(`.like-count${post_id}`).text(res)
+          $(`.like-count${post_id}`).text(res);
         },
         error: function(response) {
-          console.log('error', response)
+          console.log('error', response);
         }
       })
 

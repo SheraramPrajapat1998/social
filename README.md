@@ -1,4 +1,12 @@
 # social
 
+Django 3, bootstrap4, HTML5, CSS3 
 
-Like/Unlike ajax view isn't working
+1. profiles
+  - Profile
+  - Relationship
+
+2. posts
+  - Post
+  - Comment
+  - Like

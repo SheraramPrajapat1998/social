@@ -40,8 +40,10 @@
     
     <ul class="navbar-nav">
       {% if request.user.is_authenticated %}      
-        <li class="nav-item {% if request.path == path_to_my_profile %}active{% endif %}">
-          <a class="nav-link" href="{{ path_to_my_profile }}">Welcome, {{ request.user }}</a>
+        <li class="nav-item {% if request.path == path_to_my_profile %}active{% endif %}">          
+          <a class="nav-link" href="{{ path_to_my_profile }}">
+            <img src={{picture.url}} class="rounded-circle" width="40px"> Welcome, {{ request.user }}
+          </a>
         </li>
         <li class="nav-item {% if request.path == path_to_logout %}active{% endif %}">
           <a class="nav-link" href="{{ path_to_logout }}">logout</a>
