@@ -12,5 +12,5 @@ Django 3, bootstrap4, HTML5, CSS3
   - Like
 
 
-- Friendship model implemented
-- search functionality
+#### Friendship model implemented
+#### search functionality
